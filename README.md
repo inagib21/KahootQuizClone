@@ -1,4 +1,6 @@
 # KahootQuizClone
+![image](https://github.com/user-attachments/assets/943d0af6-0d6d-4ba5-99ff-0f22461cc62b)
+
 
 KahootQuizClone is a real-time quiz game platform inspired by Kahoot. It allows users to create, host, and participate in interactive quizzes with multiple-choice questions. The project is built using a modern tech stack, featuring a Svelte frontend and a Go backend.
 
