@@ -22,7 +22,7 @@ func main() {
 	app.Get("/", index)
 	app.Get("/api/quizzes", getQuizzes)
 
-	app.Get("/ws/", websocket.New(func(c *websocket.Conn) {
+	app.Get("/ws", websocket.New(func(c *websocket.Conn) {
 
 		var (
 			mt  int
