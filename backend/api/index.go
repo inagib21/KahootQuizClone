@@ -19,5 +19,5 @@ func init() {
 
 // Handler is the entry point for the Vercel serverless function
 func Handler(w http.ResponseWriter, r *http.Request) {
-	adaptor.HTTPHandler(app)(w, r)
+	adaptor.FiberApp(app).ServeHTTP(w, r)
 }

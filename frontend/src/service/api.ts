@@ -1,8 +1,12 @@
 import type { Quiz } from "../model/quiz";
 
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://your-vercel-deployment-url.vercel.app/api' 
+  : 'http://localhost:3000/api';
+
 export class ApiService {
     async getQuizById(id: string): Promise<Quiz | null> {
-        let response = await fetch(`/api/quizzes/${id}`);
+        let response = await fetch(`${API_BASE_URL}/quizzes/${id}`);
         if (!response.ok) {
             return null;
         }

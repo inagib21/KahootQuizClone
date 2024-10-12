@@ -81,7 +81,10 @@ export class NetService {
     private onPacketCallback?: (packet: any) => void;
 
     connect(){
-        this.webSocket = new WebSocket(`${window.location.origin.replace('http', 'ws')}/ws`);
+        const wsUrl = process.env.NODE_ENV === 'production'
+          ? `wss://your-vercel-deployment-url.vercel.app/ws`
+          : `ws://${window.location.host}/ws`;
+        this.webSocket = new WebSocket(wsUrl);
         this.webSocket.onopen = () => {
             console.log("opened connection");
         };

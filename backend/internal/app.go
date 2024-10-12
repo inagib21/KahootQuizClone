@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"github.com/gofiber/contrib/websocket"
@@ -20,6 +21,7 @@ type App struct {
 	database    *mongo.Database      // MongoDB database connection
 	quizService *service.QuizService // QuizService for managing quiz data
 	netService  *service.NetService  // NetService for managing WebSocket connections
+	httpServer  *fiber.App           // Fiber app instance for HTTP server
 }
 
 // Init initializes the application by setting up the database, services, and HTTP server.
@@ -35,29 +37,24 @@ func (a *App) Init() {
 
 // setupHttp configures the HTTP server and routes for the application.
 func (a *App) setupHttp() {
-	app := fiber.New()  // Create a new Fiber app instance
-	app.Use(cors.New()) // Enable CORS middleware
+	a.httpServer = fiber.New()   // Create a new Fiber app instance
+	a.httpServer.Use(cors.New()) // Enable CORS middleware
 
 	// Initialize the QuizController and set up the quiz-related routes
 	quizController := controller.Quiz(a.quizService)
-	app.Get("/api/quizzes", quizController.GetQuizzes)             // Get all quizzes
-	app.Get("/api/quizzes/:quizId", quizController.GetQuizById)    // Get a quiz by its ID
-	app.Put("/api/quizzes/:quizId", quizController.UpdateQuizById) // Update a quiz by its ID
+	a.httpServer.Get("/api/quizzes", quizController.GetQuizzes)             // Get all quizzes
+	a.httpServer.Get("/api/quizzes/:quizId", quizController.GetQuizById)    // Get a quiz by its ID
+	a.httpServer.Put("/api/quizzes/:quizId", quizController.UpdateQuizById) // Update a quiz by its ID
 
 	// Initialize the WebSocket controller and set up the WebSocket route
 	wsController := controller.Ws(a.netService)
-	app.Get("/ws", websocket.New(wsController.Ws)) // WebSocket endpoint for real-time communication
-
-	a.httpServer = app // Assign the Fiber app instance to the App struct
+	a.httpServer.Get("/ws", websocket.New(wsController.Ws)) // WebSocket endpoint for real-time communication
 }
 
 // setupServices initializes the services used by the application.
 // It connects the QuizService with the QuizCollection and the NetService with the QuizService.
 func (a *App) setupServices() {
-	// Initialize the QuizService with the quizzes collection from the database
 	a.quizService = service.Quiz(collection.Quiz(a.database.Collection("quizzes")))
-
-	// Initialize the NetService with the QuizService
 	a.netService = service.Net(a.quizService)
 }
 
@@ -68,7 +65,7 @@ func (a *App) setupDb() {
 	defer cancel()
 
 	// Connect to the MongoDB server using the specified URI
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGODB_URI")))
 	if err != nil {
 		panic(err) // Panic if the database connection fails
 	}
