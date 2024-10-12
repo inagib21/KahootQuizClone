@@ -17,9 +17,7 @@ import (
 
 // App struct represents the main application, containing the HTTP server, database connection, and service instances.
 type App struct {
-	httpServer *fiber.App      // Fiber app instance for handling HTTP requests
-	database   *mongo.Database // MongoDB database connection
-
+	database    *mongo.Database      // MongoDB database connection
 	quizService *service.QuizService // QuizService for managing quiz data
 	netService  *service.NetService  // NetService for managing WebSocket connections
 }
@@ -77,4 +75,21 @@ func (a *App) setupDb() {
 
 	// Select the "quiz" database and assign it to the App struct
 	a.database = client.Database("quiz")
+}
+
+func (a *App) SetupServices() {
+	a.setupDb()
+	a.setupServices()
+}
+
+func (a *App) SetupRoutes(app *fiber.App) {
+	app.Use(cors.New())
+
+	quizController := controller.Quiz(a.quizService)
+	app.Get("/api/quizzes", quizController.GetQuizzes)
+	app.Get("/api/quizzes/:quizId", quizController.GetQuizById)
+	app.Put("/api/quizzes/:quizId", quizController.UpdateQuizById)
+
+	wsController := controller.Ws(a.netService)
+	app.Get("/ws", websocket.New(wsController.Ws))
 }

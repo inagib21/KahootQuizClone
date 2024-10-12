@@ -81,7 +81,7 @@ export class NetService {
     private onPacketCallback?: (packet: any) => void;
 
     connect(){
-        this.webSocket = new WebSocket("ws://localhost:3000/ws");
+        this.webSocket = new WebSocket(`${window.location.origin.replace('http', 'ws')}/ws`);
         this.webSocket.onopen = () => {
             console.log("opened connection");
         };

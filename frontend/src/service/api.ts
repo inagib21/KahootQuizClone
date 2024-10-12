@@ -2,7 +2,7 @@ import type { Quiz } from "../model/quiz";
 
 export class ApiService {
     async getQuizById(id: string): Promise<Quiz | null> {
-        let response = await fetch(`http://localhost:3000/api/quizzes/${id}`);
+        let response = await fetch(`/api/quizzes/${id}`);
         if (!response.ok) {
             return null;
         }
@@ -12,7 +12,7 @@ export class ApiService {
     }
 
     async getQuizzes(): Promise<Quiz[]> {
-        let response = await fetch("http://localhost:3000/api/quizzes");
+        let response = await fetch("/api/quizzes");
         if (!response.ok) {
             alert("Failed to fetch quizzes!");
             return [];
@@ -23,7 +23,7 @@ export class ApiService {
     }
 
     async saveQuiz(quizId: string, quiz: Quiz) {
-        let response = await fetch(`http://localhost:3000/api/quizzes/${quizId}`, {
+        let response = await fetch(`/api/quizzes/${quizId}`, {
             method: "PUT",
             body: JSON.stringify(quiz),
             headers: {
