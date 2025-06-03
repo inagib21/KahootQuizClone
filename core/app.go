@@ -31,8 +31,13 @@ func (a *App) Init() {
 	a.setupServices() // Setup the services used by the application
 	a.setupHttp()     // Setup the HTTP routes and start the server
 
-	// Start the HTTP server on port 3000
-	log.Fatal(a.httpServer.Listen(":3000"))
+	// Start the HTTP server on port from environment or default to 3000
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+	log.Printf("Listening on port %s", port) // Optional: log the port
+	log.Fatal(a.httpServer.Listen(":" + port))
 }
 
 // setupHttp configures the HTTP server and routes for the application.
