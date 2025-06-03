@@ -7,18 +7,18 @@
       "config": { "distDir": "dist" }
     },
     {
-      "src": "backend/api/index.go",
+      "src": "api/index.go",
       "use": "@vercel/go"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/api/index.go"
+      "dest": "api/index.go"
     },
     {
       "src": "/ws",
-      "dest": "backend/api/index.go"
+      "dest": "api/index.go"
     },
     {
       "handle": "filesystem"
