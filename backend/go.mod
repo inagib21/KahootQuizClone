@@ -1,6 +1,6 @@
 module quiz.com/quiz
 
-go 1.23.0
+go 1.22.0
 
 require (
 	github.com/gofiber/contrib/websocket v1.3.2
