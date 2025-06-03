@@ -17,10 +17,6 @@
       "dest": "api/index.go"
     },
     {
-      "src": "/ws",
-      "dest": "api/index.go"
-    },
-    {
       "src": "/assets/(.*)",
       "dest": "/frontend/assets/$1"
     },

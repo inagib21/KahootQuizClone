@@ -74,36 +74,38 @@ export interface LeaderboardPacket extends Packet {
 
 export class NetService {
 
-    private webSocket!: WebSocket;
-    private textDecoder: TextDecoder = new TextDecoder();
-    private textEncoder: TextEncoder = new TextEncoder();
+    private eventSource!: EventSource;
 
     private onPacketCallback?: (packet: any) => void;
 
     connect(){
-        const wsUrl = import.meta.env.PROD
-          ? `wss://${window.location.host}/ws`
-          : `ws://${window.location.host}/ws`;
-        this.webSocket = new WebSocket(wsUrl);
-        this.webSocket.onopen = () => {
-            console.log("opened connection");
+        this.eventSource = new EventSource("/api/events");
+        
+        this.eventSource.onopen = () => {
+            console.log("SSE connection opened");
         };
 
-        this.webSocket.onmessage = async (event: MessageEvent) => {
-            const arrayBuffer = await event.data.arrayBuffer();
-            const bytes = new Uint8Array(arrayBuffer);  
-            const packetId = bytes[0];
+        this.eventSource.onerror = (err) => {
+            console.error("EventSource failed:", err);
+        };
 
-            const packet = JSON.parse(this.textDecoder.decode(bytes.subarray(1)));
-
-            packet.id = packetId;
-
-            console.log(packetId);
-            console.log(packet);
-
-            if(this.onPacketCallback)
-                this.onPacketCallback(packet);
-        }
+        this.eventSource.onmessage = (event: MessageEvent) => {
+            console.log("SSE message received:", event.data);
+            try {
+                const packetData = JSON.parse(event.data);
+                if (packetData && typeof packetData.id !== 'undefined') {
+                    if(this.onPacketCallback) {
+                        this.onPacketCallback(packetData);
+                    }
+                } else {
+                    if (packetData.type === "connected") {
+                        console.log("SSE Server Connection Message:", packetData.message);
+                    }
+                }
+            } catch (e) {
+                console.error("Error parsing SSE message data:", e);
+            }
+        };
     }
 
     onPacket(callback: (packet: Packet) => void){
@@ -111,21 +113,7 @@ export class NetService {
     }
 
     sendPacket(packet: Packet) {
-		const packetId = packet.id;
-		const packetData = JSON.stringify(packet, (key, value) =>
-            key == "id" ? undefined : value
-        );
-
-		const packetIdArray = new Uint8Array([packetId]);
-		const packetDataArray = this.textEncoder.encode(packetData);
-
-		const mergedArray = new Uint8Array(
-			packetIdArray.length + packetDataArray.length,
-		);
-		mergedArray.set(packetIdArray);
-		mergedArray.set(packetDataArray, packetIdArray.length);
-
-		this.webSocket.send(mergedArray);
+		console.warn("sendPacket (SSE): This action needs to be refactored to use HTTP requests.", packet);
 	}
 
 }

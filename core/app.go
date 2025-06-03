@@ -1,7 +1,9 @@
 package internal
 
 import (
+	"bufio"
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -9,6 +11,7 @@ import (
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/valyala/fasthttp/fasthttpadaptor"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"quiz.com/quiz/core/collection"
@@ -51,9 +54,42 @@ func (a *App) setupHttp() {
 	a.httpServer.Get("/api/quizzes/:quizId", quizController.GetQuizById)    // Get a quiz by its ID
 	a.httpServer.Put("/api/quizzes/:quizId", quizController.UpdateQuizById) // Update a quiz by its ID
 
-	// Initialize the WebSocket controller and set up the WebSocket route
-	wsController := controller.Ws(a.netService)
-	a.httpServer.Get("/ws", websocket.New(wsController.Ws)) // WebSocket endpoint for real-time communication
+	// Remove or comment out WebSocket controller and route
+	// wsController := controller.Ws(a.netService)
+	// a.httpServer.Get("/ws", websocket.New(wsController.Ws))
+
+	// Add SSE endpoint
+	a.httpServer.Get("/api/events", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "text/event-stream")
+		c.Set("Cache-Control", "no-cache")
+		c.Set("Connection", "keep-alive")
+		c.Set("Transfer-Encoding", "chunked")
+
+		c.Context().SetBodyStreamWriter(fasthttpadaptor.NewStreamWriter(func(w *bufio.Writer) {
+			log.Println("SSE client connected")
+			fmt.Fprintf(w, "data: {\"type\": \"connected\", \"message\": \"Welcome!\"}\n\n")
+			w.Flush()
+
+			// Keep connection alive, manage client list here in a real app
+			// For now, just simulate sending a ping periodically or wait for disconnection
+			ticker := time.NewTicker(10 * time.Second)
+			defer ticker.Stop()
+
+			clientCtx := c.Context()
+			for {
+				select {
+				case <-ticker.C:
+					// Send a keep-alive comment or an empty event
+					fmt.Fprintf(w, ": keep-alive\n\n")
+					w.Flush()
+				case <-clientCtx.Done():
+					log.Println("SSE client disconnected")
+					return
+				}
+			}
+		}))
+		return nil
+	})
 }
 
 // setupServices initializes the services used by the application.
@@ -92,6 +128,36 @@ func (a *App) SetupRoutes(app *fiber.App) {
 	app.Get("/api/quizzes/:quizId", quizController.GetQuizById)
 	app.Put("/api/quizzes/:quizId", quizController.UpdateQuizById)
 
-	wsController := controller.Ws(a.netService)
-	app.Get("/ws", websocket.New(wsController.Ws))
+	// Comment out WebSocket setup in this context as well for now
+	// wsController := controller.Ws(a.netService)
+	// app.Get("/ws", websocket.New(wsController.Ws))
+
+	// Add SSE endpoint for Vercel function context
+	app.Get("/api/events", func(c *fiber.Ctx) error {
+		c.Set("Content-Type", "text/event-stream")
+		c.Set("Cache-Control", "no-cache")
+		c.Set("Connection", "keep-alive")
+		c.Set("Transfer-Encoding", "chunked")
+
+		c.Context().SetBodyStreamWriter(fasthttpadaptor.NewStreamWriter(func(w *bufio.Writer) {
+			log.Println("SSE client connected via Vercel function")
+			fmt.Fprintf(w, "data: {\"type\": \"connected\", \"message\": \"Welcome via Vercel!\"}\n\n")
+			w.Flush()
+
+			clientCtx := c.Context()
+			// Simplified keep-alive for Vercel serverless context
+			// Real client management will be in NetService
+			for {
+				select {
+				case <-time.After(25 * time.Second): // Vercel timeout for responses is ~30s-60s for Hobby tier
+					fmt.Fprintf(w, ": keep-alive for Vercel\n\n")
+					w.Flush()
+				case <-clientCtx.Done():
+					log.Println("SSE client disconnected from Vercel function")
+					return
+				}
+			}
+		}))
+		return nil
+	})
 }
