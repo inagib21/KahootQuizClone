@@ -21,6 +21,9 @@
       "dest": "backend/api/index.go"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }

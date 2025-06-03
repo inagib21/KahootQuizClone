@@ -10,7 +10,7 @@ import (
 
 	"github.com/gofiber/contrib/websocket"
 	"github.com/google/uuid"
-	"quiz.com/quiz/internal/entity"
+	"quiz.com/quiz/core/entity"
 )
 
 // Player represents a player in the quiz game

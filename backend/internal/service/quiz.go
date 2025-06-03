@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"quiz.com/quiz/internal/collection"
-	"quiz.com/quiz/internal/entity"
+	"quiz.com/quiz/core/collection"
+	"quiz.com/quiz/core/entity"
 )
 
 // QuizService provides methods for managing quizzes, including retrieval, update, and listing.

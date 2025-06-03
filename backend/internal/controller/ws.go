@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/gofiber/contrib/websocket"
-	"quiz.com/quiz/internal/service"
+	"quiz.com/quiz/core/service"
 )
 
 // WebsocketController handles WebSocket connections and communication

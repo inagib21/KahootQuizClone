@@ -1,8 +1,8 @@
 package main
 
-import "quiz.com/quiz/internal"
+import "quiz.com/quiz/core"
 
 func main() {
-	app := internal.App{}
+	app := core.App{}
 	app.Init()
 }

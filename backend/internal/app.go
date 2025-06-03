@@ -11,9 +11,9 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"quiz.com/quiz/internal/collection"
-	"quiz.com/quiz/internal/controller"
-	"quiz.com/quiz/internal/service"
+	"quiz.com/quiz/core/collection"
+	"quiz.com/quiz/core/controller"
+	"quiz.com/quiz/core/service"
 )
 
 // App struct represents the main application, containing the HTTP server, database connection, and service instances.

@@ -3,8 +3,8 @@ package controller
 import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"quiz.com/quiz/internal/entity"
-	"quiz.com/quiz/internal/service"
+	"quiz.com/quiz/core/entity"
+	"quiz.com/quiz/core/service"
 )
 
 // QuizController handles HTTP requests related to quizzes

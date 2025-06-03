@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/gofiber/contrib/websocket"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"quiz.com/quiz/internal/entity"
+	"quiz.com/quiz/core/entity"
 )
 
 // NetService manages the networking aspect of the quiz game, handling game sessions and WebSocket communication.

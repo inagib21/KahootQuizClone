@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"quiz.com/quiz/internal/entity"
+	"quiz.com/quiz/core/entity"
 )
 
 // QuizCollection wraps the MongoDB collection for Quiz entities

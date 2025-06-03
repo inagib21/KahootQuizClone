@@ -5,16 +5,19 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
-	"quiz.com/quiz/internal"
+	"quiz.com/quiz/core"
 )
 
 var app *fiber.App
 
 func init() {
 	app = fiber.New()
-	internalApp := internal.App{}
-	internalApp.SetupServices()
-	internalApp.SetupRoutes(app)
+	// internalApp := internal.App{}
+	// internalApp.SetupServices()
+	// internalApp.SetupRoutes(app)
+	coreApp := core.App{}
+	coreApp.SetupServices()
+	coreApp.SetupRoutes(app)
 }
 
 // Handler is the entry point for the Vercel serverless function
