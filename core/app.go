@@ -8,10 +8,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/gofiber/contrib/websocket"
+	// "github.com/gofiber/contrib/websocket" // Commented out as it's no longer used directly here
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/adaptor" // Correct adaptor for Fiber v2
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/valyala/fasthttp/fasthttpadaptor"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"quiz.com/quiz/core/collection"
@@ -65,7 +65,7 @@ func (a *App) setupHttp() {
 		c.Set("Connection", "keep-alive")
 		c.Set("Transfer-Encoding", "chunked")
 
-		c.Context().SetBodyStreamWriter(fasthttpadaptor.NewStreamWriter(func(w *bufio.Writer) {
+		c.Context().SetBodyStreamWriter(adaptor.NewStreamWriter(func(w *bufio.Writer) {
 			log.Println("SSE client connected")
 			fmt.Fprintf(w, "data: {\"type\": \"connected\", \"message\": \"Welcome!\"}\n\n")
 			w.Flush()
@@ -139,7 +139,7 @@ func (a *App) SetupRoutes(app *fiber.App) {
 		c.Set("Connection", "keep-alive")
 		c.Set("Transfer-Encoding", "chunked")
 
-		c.Context().SetBodyStreamWriter(fasthttpadaptor.NewStreamWriter(func(w *bufio.Writer) {
+		c.Context().SetBodyStreamWriter(adaptor.NewStreamWriter(func(w *bufio.Writer) {
 			log.Println("SSE client connected via Vercel function")
 			fmt.Fprintf(w, "data: {\"type\": \"connected\", \"message\": \"Welcome via Vercel!\"}\n\n")
 			w.Flush()
