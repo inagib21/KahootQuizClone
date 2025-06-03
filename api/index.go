@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
-	"quiz.com/quiz/core"
+	customcore "quiz.com/quiz/core"
 )
 
 var app *fiber.App
@@ -15,7 +15,7 @@ func init() {
 	// internalApp := internal.App{}
 	// internalApp.SetupServices()
 	// internalApp.SetupRoutes(app)
-	coreApp := core.App{}
+	coreApp := customcore.App{}
 	coreApp.SetupServices()
 	coreApp.SetupRoutes(app)
 }
