@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/gofiber/contrib/websocket"
 	"github.com/google/uuid"
