@@ -21,11 +21,17 @@
       "dest": "api/index.go"
     },
     {
-      "handle": "filesystem"
+      "src": "/assets/(.*)",
+      "dest": "/frontend/assets/$1"
+    },
+    {
+      "src": "/vite.svg",
+      "dest": "/frontend/vite.svg"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "methods": ["GET"],
+      "dest": "/frontend/index.html"
     }
   ],
   "build": {
