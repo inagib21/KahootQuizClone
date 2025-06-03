@@ -2,29 +2,32 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/api/index.go",
-      "use": "@vercel/go"
-    },
-    {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
+      "config": { "distDir": "dist" }
+    },
+    {
+      "src": "backend/api/index.go",
+      "use": "@vercel/go"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/api/index.go"
+      "dest": "backend/api/index.go"
     },
     {
       "src": "/ws",
-      "dest": "/backend/api/index.go"
+      "dest": "backend/api/index.go"
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/dist/$1"
+      "dest": "/index.html"
     }
-  ]
+  ],
+  "build": {
+    "env": {
+      "GO_BUILD_FLAGS": "-ldflags '-s -w'"
+    }
+  }
 }
